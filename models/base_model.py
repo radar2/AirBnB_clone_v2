@@ -2,13 +2,20 @@
 """This is the base model class for AirBnB"""
 import uuid
 import models
+import os
 from datetime import datetime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime
 
 
+base = declarative_base()
 class BaseModel:
     """This class will defines all common attributes/methods
     for other classes
     """
+    id = Column(string(60), unique=True, nullable=False, primary_key=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
         """Instantiation of base model class
@@ -20,11 +27,18 @@ class BaseModel:
             created_at: creation date
             updated_at: updated date
         """
+        if id not in kwargs:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+
         if kwargs:
             for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
                     value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
                 if key != "__class__":
+                    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+                        value = value.strip('"')
                     setattr(self, key, value)
         else:
             self.id = str(uuid.uuid4())
@@ -59,4 +73,13 @@ class BaseModel:
         my_dict["__class__"] = str(type(self).__name__)
         my_dict["created_at"] = self.created_at.isoformat()
         my_dict["updated_at"] = self.updated_at.isoformat()
+
+        if "_sa_instance_state" in my_dict:
+            del my_dict["_sa_instance_state"]
+
         return my_dict
+
+    def delete(self):
+        """Deletes the current instance from the storage
+        """
+        models.storage.delete(self)
