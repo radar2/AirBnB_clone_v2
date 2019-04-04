@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """This is the state class"""
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from models.city import City
+from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 import os
 
@@ -18,3 +19,12 @@ class State(BaseModel, Base):
         cities = relationship("City", cascade="all")
     else:
         name = ""
+
+        @property
+        def cities(self):
+            """returns city list instead"""
+            res = []
+            for i in models.storage.all(City).values():
+                if i.state_id == self.id:
+                    res.append(i)
+            return res
