@@ -4,7 +4,7 @@ import json
 import os
 from models.base_model import BaseModel, Base
 from models.user import User
-from models.state import state
+from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.place import Place
@@ -32,14 +32,26 @@ class DBStorage:
 
     def all(self, cls=None):
         """All"""
-        res = {}
+        res_dict = {}
+
         if cls is not None:
-            
-        return res
+            temp = self.__session.query(eval(cls)).all()
+        else:
+            for i in Base.__subclasses__():
+                temp = self.__session.query(i).all()
+
+        for i in temp:
+            key = "{}.{}".format(i.__class__.__name__, i.id)
+            res_dict[key] = i
+
+        return res_dict
 
     def new(self, obj):
         """New"""
-        self.__session.add(obj)
+        try:
+            self.__session.add(obj)
+        except:
+            pass
 
     def save(self):
         """Save"""
