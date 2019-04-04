@@ -2,17 +2,20 @@
 """This is the place class"""
 import os
 from models.base_model import BaseModel, Base
-from models.amenities import Amenity
+from models.amenity import Amenity
+from models.review import Review
 from sqlalchemy import Column, String, Integer, ForeignKey, Float, Table
+from sqlalchemy.orm import relationship
 
 
 place_amenity = Table("place_amenity", Base.metadata,
-                     Column("place_id", String(60),
-                            ForeignKey("places.id"),
-                            primary_key=True, nullable=False),
-                     Column("amenity_id", String(60),
-                            ForeignKey("amenities.id"),
-                            primary_key=True, nullable=False))
+                      Column("place_id", String(60),
+                             ForeignKey("places.id"),
+                             primary_key=True, nullable=False),
+                      Column("amenity_id", String(60),
+                             ForeignKey("amenities.id"),
+                             primary_key=True, nullable=False))
+
 
 class Place(BaseModel, Base):
     """This is the class for Place
@@ -44,6 +47,7 @@ class Place(BaseModel, Base):
         longitude = Column(Float, nullable=False)
         amenities = relationship("Amenity", secondary="place_amenity",
                                  viewonly=False)
+        amenity_ids = []
     else:
         city_id = ""
         user_id = ""
@@ -56,6 +60,15 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+
+        @property
+        def reviews(self):
+            """returns list of Reviews instances"""
+            res = []
+            for i in models.storage.all(Review).values():
+                if i.place_id == self.id:
+                    res.append(i)
+            return res
 
         @property
         def amenities(self):
