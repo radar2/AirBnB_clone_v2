@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 """This is the state class"""
-from models.base_model import BaseModel
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy import relationship
+from models.base_model import BaseModel, Base
+from models.city import City
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
+import os
 
 
-class State(BaseModel):
+class State(BaseModel, Base):
     """This is the class for State
     Attributes:
         name: input name
@@ -17,3 +19,12 @@ class State(BaseModel):
         cities = relationship("City", cascade="all")
     else:
         name = ""
+
+        @property
+        def cities(self):
+            """returns city list instead"""
+            res = []
+            for i in models.storage.all(City).values():
+                if i.state_id == self.id:
+                    res.append(i)
+            return res
