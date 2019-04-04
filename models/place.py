@@ -2,8 +2,17 @@
 """This is the place class"""
 import os
 from models.base_model import BaseModel, Base
+from models.amenities import Amenity
 from sqlalchemy import Column, String, Integer, ForeignKey, Float, Table
 
+
+place_amenity = Table("place_amenity", Base.metadata,
+                     Column("place_id", String(60),
+                            ForeignKey("places.id"),
+                            primary_key=True, nullable=False),
+                     Column("amenity_id", String(60),
+                            ForeignKey("amenities.id"),
+                            primary_key=True, nullable=False))
 
 class Place(BaseModel, Base):
     """This is the class for Place
@@ -33,6 +42,8 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=False)
         longitude = Column(Float, nullable=False)
+        amenities = relationship("Amenity", secondary="place_amenity",
+                                 viewonly=False)
     else:
         city_id = ""
         user_id = ""
@@ -45,3 +56,20 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+
+        @property
+        def amenities(self):
+            """returns list of amenity instances"""
+            res = []
+            for i in models.storage.all(Amenity).values():
+                if i.id == self.amenity_ids:
+                    res.append(i)
+            return res
+
+        @amenities.setter
+        def amenities(self, value):
+            """setter for amenities"""
+            if isinstance(value, Amenity):
+                self.amenity_ids.append(value.id)
+            else:
+                pass
