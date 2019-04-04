@@ -33,13 +33,17 @@ class DBStorage:
     def all(self, cls=None):
         """All"""
         res_dict = {}
+        temp = []
 
         if cls is not None:
-            temp = self.__session.query(eval(cls)).all()
+            temp = self.__session.query(cls).all()
         else:
-            for i in Base.__subclasses__():
-                temp = self.__session.query(i).all()
-
+            temp += self.__session.query(User).all()
+            temp += self.__session.query(State).all()
+            temp += self.__session.query(City).all()
+            temp += self.__session.query(Amenity).all()
+            temp += self.__session.query(Place).all()
+            temp += self.__session.query(Review).all()
         for i in temp:
             key = "{}.{}".format(i.__class__.__name__, i.id)
             res_dict[key] = i
