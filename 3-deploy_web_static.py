@@ -49,6 +49,7 @@ def do_deploy(archive_path):
 
     return True
 
+
 def deploy():
     """Runs both pack and deploy"""
     f = do_pack()
