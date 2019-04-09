@@ -33,6 +33,7 @@ def do_deploy(archive_path):
     try:
         put(archive_path, '/tmp/')
         run("sudo mkdir -p /data/web_static/releases/" + f + "/")
+        run('sudo chown -R ubuntu:ubuntu /data')
         run("sudo tar -xzf /tmp/" + f + ".tgz" +
             " -C /data/web_static/releases/" + f + "/")
         run("sudo rm /tmp/" + f + ".tgz")
@@ -45,4 +46,3 @@ def do_deploy(archive_path):
         return True
     except:
         return False
-    return True
