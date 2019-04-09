@@ -8,6 +8,7 @@ env.hosts = ["34.73.5.42", " 34.73.70.108"]
 env.user = "ubuntu"
 env.key_filename = "~/.ssh/holberton"
 
+
 def do_pack():
     """Packs web_static into tgz"""
     current_time = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -18,6 +19,7 @@ def do_pack():
         return file_path
     else:
         return None
+
 
 def do_deploy(archive_path):
     """Deploys archive to web servers"""
