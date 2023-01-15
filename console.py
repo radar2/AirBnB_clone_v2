@@ -114,50 +114,63 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
+        """ Create an object of any class
+        Exceptions:
+        SyntaxError: when there is no args given
+        NameError: when there is no object that has the name
+
+        """
+
+        try:
+            if not args:
+                raise SyntaxError()
+            my_list = args.split(" ")
+            obj = eval("{}()".format(my_list[0]))
+            # Params
+            my_params = my_list[1:]
+            for i in my_params:
+                split_param = i.split("=")
+                to_rep = split_param[1].replace("_", " ")
+                obj.__dict__[split_param[0]] = to_rep
+            obj.save()
+            print("{}".format(obj.id))
+        except SyntaxError:
             print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
+        except NameError:
             print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
         print("[Usage]: create <className>\n")
 
-    def do_show(self, args):
-        """ Method to show an individual object """
-        new = args.partition(" ")
-        c_name = new[0]
-        c_id = new[2]
+        def do_show(self, args):
+            """ Method to show an individual object """
+            new = args.partition(" ")
+            c_name = new[0]
+            c_id = new[2]
 
-        # guard against trailing args
-        if c_id and ' ' in c_id:
-            c_id = c_id.partition(' ')[0]
+            # guard against trailing args
+            if c_id and ' ' in c_id:
+                c_id = c_id.partition(' ')[0]
 
-        if not c_name:
-            print("** class name missing **")
-            return
+            if not c_name:
+                print("** class name missing **")
+                return
 
-        if c_name not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
+            if c_name not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+                return
 
-        if not c_id:
-            print("** instance id missing **")
-            return
+            if not c_id:
+                print("** instance id missing **")
+                return
 
-        key = c_name + "." + c_id
-        try:
-            print(storage._FileStorage__objects[key])
-        except KeyError:
-            print("** no instance found **")
+            key = c_name + "." + c_id
+            try:
+                print(storage._FileStorage__objects[key])
+            except KeyError:
+                print("** no instance found **")
 
     def help_show(self):
         """ Help information for the show command """
