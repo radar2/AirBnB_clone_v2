@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""Flask"""
+"""
+Flask - Web Framework
+"""
 from flask import Flask
 
 app = Flask(__name__)
@@ -7,8 +9,7 @@ app = Flask(__name__)
 
 @app.route('/', strick_slashes=False)
 def hello_route():
-    """
-    hello_route hello function
+    """hello route function
     """
     return "Hello HBNB!"
 
