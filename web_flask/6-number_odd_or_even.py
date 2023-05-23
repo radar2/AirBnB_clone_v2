@@ -45,7 +45,7 @@ def n_is_number(n):
 
 
 @app.route('/number_template/<int:n>', strict_slashes=False)
-def number_template(n):
+def number_template(n=None):
     """Number template.
     """
     if isinstance(n, int):
@@ -53,15 +53,15 @@ def number_template(n):
 
 
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
-def number_odd_or_even(n):
-    """Number template.
+def number_odd_or_even(n=None):
+    """Number odd or even.
     """
     if isinstance(n, int):
         if n % 2:
             even_odd = "odd"
         else:
             even_odd = "even"
-        return render_template("6-number_odd_or_even.html", n=n, even_odd=even_odd)
+        return render_template("6-number_odd_or_even.html", n=n, eo=even_odd)
 
 
 if __name__ == "__main__":
